@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RADIO CAFE — Menu</title>
+<meta name="theme-color" content="#5a3b2e">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600;700&display=swap');
+:root{--cream:#f3eadb;--paper:#fbf7f0;--brown:#5a3b2e;--brown2:#76523f;--ink:#2c211b;--line:#dfd1be;--shadow:0 12px 32px rgba(68,43,29,.12)}
+*{box-sizing:border-box} body{margin:0;background:var(--cream);color:var(--ink);font-family:Montserrat,Arial,sans-serif}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 15% 10%,rgba(255,255,255,.55),transparent 28%),radial-gradient(circle at 90% 90%,rgba(90,59,46,.08),transparent 30%)}
+header{padding:54px 18px 30px;text-align:center;animation:rise .7s ease both}
+.brand{display:inline-flex;align-items:center;gap:12px;color:var(--brown);font-family:"Cormorant Garamond",serif;font-size:54px;line-height:1;font-weight:700;letter-spacing:5px}
+.brand:before,.brand:after{content:"";display:block;width:48px;height:1px;background:var(--brown2)}
+.tag{margin:13px 0 0;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--brown2)}
+main{width:min(1180px,94%);margin:auto;padding-bottom:120px}
+.section{margin:28px 0 50px;animation:rise .65s ease both}
+.section-title{display:flex;align-items:center;gap:14px;margin:0 0 20px;font-family:"Cormorant Garamond",serif;font-size:34px;color:var(--brown)}
+.section-title:after{content:"";height:1px;background:var(--line);flex:1}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px}
+.card{background:rgba(251,247,240,.94);border:1px solid rgba(90,59,46,.1);border-radius:18px;overflow:hidden;box-shadow:var(--shadow);transition:.25s;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-4px);box-shadow:0 18px 38px rgba(68,43,29,.18)}
+.photo{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:#f7f0e6;padding:8px;overflow:hidden}
+.photo img{width:100%;height:100%;object-fit:contain;display:block}
+.info{padding:14px 14px 15px;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.name{font-size:13px;font-weight:600;line-height:1.35}
+.price{font-family:"Cormorant Garamond",serif;font-size:22px;font-weight:700;color:var(--brown);white-space:nowrap}
+.add{grid-column:1/-1;border:0;border-radius:11px;padding:10px;background:var(--brown);color:#fff8ee;font:600 11px Montserrat;letter-spacing:1.5px;cursor:pointer;transition:.2s}
+.add:hover{background:#42291f} .add.added{background:var(--brown2)}
+.cart{position:fixed;right:22px;bottom:22px;z-index:10;border:0;border-radius:18px;background:var(--brown);color:#fff8ee;padding:16px 20px;min-width:210px;box-shadow:0 12px 30px rgba(47,29,21,.3);font:700 12px Montserrat;letter-spacing:1.4px;cursor:pointer}
+.cart span{display:inline-flex;min-width:22px;height:22px;border-radius:50%;align-items:center;justify-content:center;background:#fff8ee;color:var(--brown);margin-left:7px}
+.overlay{position:fixed;inset:0;background:rgba(33,23,18,.58);display:none;z-index:20;padding:18px;align-items:flex-end;justify-content:center}
+.overlay.show{display:flex} .modal{width:min(600px,100%);max-height:90vh;overflow:auto;background:var(--paper);border-radius:24px 24px 0 0;padding:24px;animation:up .3s ease}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.modal h2{font-family:"Cormorant Garamond",serif;font-size:34px;color:var(--brown);margin:0}
+.close{border:0;background:#eee1d1;border-radius:50%;width:36px;height:36px;cursor:pointer;color:var(--brown);font-size:20px}
+.order-row{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);font-size:12px}
+.qty{display:flex;align-items:center;gap:7px} .qty button{border:0;background:#e8dac8;color:var(--brown);width:28px;height:28px;border-radius:8px;cursor:pointer;font-weight:700}
+.remove{border:0;background:transparent;color:#9a6b58;cursor:pointer}
+.total{display:flex;justify-content:space-between;padding:18px 0;font-weight:700;color:var(--brown)}
+.field{margin-top:12px} label{display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;color:var(--brown2)} input{width:100%;padding:13px;border:1px solid var(--line);border-radius:11px;background:#fffdf9;outline:none;font:14px Montserrat} input:focus{border-color:var(--brown2)}
+.send{width:100%;margin-top:18px;border:0;border-radius:13px;background:var(--brown);color:white;padding:15px;font:700 12px Montserrat;letter-spacing:1.5px;cursor:pointer}
+.note{font-size:10px;color:#8a7669;text-align:center;margin:10px 0 0;line-height:1.5}
+.empty{padding:24px;text-align:center;color:#8a7669;font-size:13px}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}} @keyframes up{from{transform:translateY(30px);opacity:.6}to{transform:none;opacity:1}}
+@media(max-width:560px){.brand{font-size:43px}.brand:before,.brand:after{width:24px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.card{border-radius:14px}.photo{padding:5px}.info{padding:10px}.name{font-size:11px}.price{font-size:19px}.add{padding:9px 5px;font-size:9px}.cart{left:15px;right:15px;bottom:14px;width:calc(100% - 30px)}}
+
+.category-nav{position:sticky;top:0;z-index:9;width:min(1180px,94%);margin:0 auto 18px;padding:10px 0;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;background:rgba(243,234,219,.92);backdrop-filter:blur(10px)}
+.category-nav::-webkit-scrollbar{display:none}
+.category-nav a{flex:0 0 auto;text-decoration:none;color:var(--brown);border:1px solid var(--line);background:rgba(251,247,240,.9);padding:9px 13px;border-radius:999px;font:600 10px Montserrat;letter-spacing:.8px;text-transform:uppercase;transition:.2s}
+.category-nav a:hover{background:var(--brown);color:#fff8ee}
+.section-title{cursor:pointer}
+.section-title a{color:inherit;text-decoration:none}
+.location-wrap{display:flex;justify-content:center;padding:5px 0 125px}
+.location-btn{display:inline-flex;align-items:center;gap:10px;text-decoration:none;border:0;border-radius:15px;background:var(--brown);color:#fff8ee;padding:16px 26px;box-shadow:0 10px 25px rgba(47,29,21,.2);font:700 12px Montserrat;letter-spacing:1.5px;transition:.2s}
+.location-btn:hover{transform:translateY(-2px);background:#42291f}
+
+.size-options{display:flex;gap:7px;margin:8px 0 10px}
+.size-btn{border:1px solid var(--brown);background:#fff8ee;color:var(--brown);border-radius:9px;padding:7px 12px;cursor:pointer;font:700 11px Montserrat;transition:.15s}
+.size-btn:hover,.size-btn.active{background:var(--brown);color:#fff8ee}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">RADIO</div>
+  <div class="tag">CAFE · COFFEE · MORE</div>
+</header>
+<nav class="category-nav" id="categoryNav"></nav>
+<main id="menu"></main>
+<div class="location-wrap">
+  <a class="location-btn" href="https://www.google.com/maps/search/?api=1&query=RADIO+CAFE" target="_blank" rel="noopener">
+    <span>⌖</span> VIEW LOCATION
+  </a>
+</div>
+<button class="cart" onclick="openCart()">VIEW ORDER / CART <span id="count">0</span></button>
+<style>
+#orderSentScreen{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:var(--cream);padding:24px;text-align:center;}
+#orderSentScreen.show{display:flex;}
+.order-sent-box{max-width:480px;width:100%;background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:36px 24px;box-shadow:var(--shadow);}
+.order-sent-check{font-size:64px;color:var(--brown);margin-bottom:12px;}
+.order-sent-box h2{margin:0 0 10px;color:var(--brown);font-size:30px;}
+.order-sent-box p{line-height:1.7;color:var(--brown2);margin:0;}
+.order-sent-box .scan-note{margin-top:22px;padding:14px;border-radius:12px;background:#eee1d1;color:var(--brown);font-weight:700;}
+</style>
+<div id="orderSentScreen" aria-hidden="true"><div class="order-sent-box"><div class="order-sent-check">✓</div><h2>Order Sent</h2><p>Your order is ready in WhatsApp.</p><div class="scan-note">To place another order, scan the table QR code again.</div></div></div>
+
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeCart()">
+  <div class="modal">
+    <div class="modal-head"><h2>Your Order</h2><button class="close" onclick="closeCart()">×</button></div>
+    <div id="orderItems"></div>
+    <div class="total"><span>Total</span><span id="total">0 EGP</span></div>
+    <div class="field"><label>Your Name</label><input id="customerName" placeholder="Enter your name"></div>
+    <div class="field"><label>Table Number</label><input id="tableNumber" placeholder="e.g. 12"></div>
+    <button class="send" onclick="sendOrder()">SEND ORDER ON WHATSAPP</button>
+    <p class="note">No phone number is required. Your order will open in WhatsApp with the selected items.</p>
+  </div>
+</div>
+<script>
+const WHATSAPP_NUMBER = "201003914947"; // Replace with RADIO CAFE WhatsApp number, digits only.
+const products = [
+  {
+    "section": "Hot Drinks",
+    "name": "Tea",
+    "price": 15,
+    "image": "images/tea.jpg"
+  },
+  {
+    "section": "Hot Drinks",
+    "name": "English Tea",
+    "price": 20,
+    "image": "images/english-tea.jpg"
+  },
+  {
+    "section": "Hot Drinks",
+    "name": "Turkish Coffee",
+    "price": 25,
+    "image": "images/espresso.jpg"
+  },
+  {
+    "section": "Hot Drinks",
+    "name": "Hot Cider",
+    "price": 40,
+    "image": "images/hot-cider.jpg"
+  },
+  {
+    "section": "Hot Drinks",
+    "name": "Hot Chocolate",
+    "price": 40,
+    "image": "images/hot-chocolate.jpg"
+  },
+  {
+    "section": "Hot Drinks",
+    "name": "Espresso",
+    "price": 40,
+    "priceS": 40,
+    "priceD": 45,
+    "image": "images/espresso.jpg"
+  },
+  {
+    "section": "Hot Drinks",
+    "name": "Americano Coffee",
+    "price": 40,
+    "image": "images/americano.jpg"
+  },
+  {
+    "section": "Hot Drinks",
+    "name": "Nescafe",
+    "price": 40,
+    "image": "images/nescafe.jpg"
+  },
+  {
+    "section": "Hot Drinks",
+    "name": "Hazelnut Coffee",
+    "price": 40,
+    "image": "images/hazelnut-coffee.jpg"
+  },
+  {
+    "section": "Hot Drinks",
+    "name": "Salep Classic",
+    "price": 35,
+    "image": "images/salep-classic.jpg"
+  },
+  {
+    "section": "Hot Drinks",
+    "name": "Cortado",
+    "price": 45,
+    "image": "images/cortado.jpg"
+  },
+  {
+    "section": "Hot Drinks",
+    "name": "Macchiato",
+    "price": 45,
+    "priceS": 45,
+    "priceD": 50,
+    "image": "images/espresso.jpg"
+  },
+  {
+    "section": "Hot Drinks",
+    "name": "Latte Hot Spanish",
+    "price": 50,
+    "image": "images/latte-hot-spanish.jpg"
+  },
+  {
+    "section": "Hot Drinks",
+    "name": "Cappuccino",
+    "price": 50,
+    "image": "images/cappuccino.jpg"
+  },
+  {
+    "section": "Iced Drinks",
+    "name": "Iced Latte",
+    "price": 70,
+    "image": "images/iced-latte.jfif"
+  },
+  {
+    "section": "Iced Drinks",
+    "name": "Spanish Latte",
+    "price": 75,
+    "image": "images/spanish-latte.jfif"
+  },
+  {
+    "section": "Iced Drinks",
+    "name": "Spanish Pistachio",
+    "price": 75,
+    "image": "images/spanish-pistachio.jfif"
+  },
+  {
+    "section": "Iced Drinks",
+    "name": "Iced Mocha",
+    "price": 80,
+    "image": "images/iced-mocha.png"
+  },
+  {
+    "section": "Iced Drinks",
+    "name": "Iced Mocha Dark / White",
+    "price": 65,
+    "image": "images/iced-mocha-dark-white.png"
+  },
+  {
+    "section": "Iced Drinks",
+    "name": "Iced Mocha Strawberry Caramel",
+    "price": 90,
+    "image": "images/iced-mocha-strawberry-carame.png"
+  },
+  {
+    "section": "Iced Drinks",
+    "name": "Mojito Classic",
+    "price": 60,
+    "image": "images/mojito-classic.png"
+  },
+  {
+    "section": "Iced Drinks",
+    "name": "Mojito + Flavor",
+    "price": 50,
+    "image": "images/mojito-flavor.png"
+  },
+  {
+    "section": "Iced Drinks",
+    "name": "Mojito Red Bull",
+    "price": 100,
+    "image": "images/mojito-red-bull.jpg"
+  },
+  {
+    "section": "Frappe",
+    "name": "Classic Frappe",
+    "price": 70,
+    "image": "images/classic-frappe.jpg"
+  },
+  {
+    "section": "Frappe",
+    "name": "Caramel Frappe",
+    "price": 75,
+    "image": "images/caramel-frappe.jpg"
+  },
+  {
+    "section": "Frappe",
+    "name": "Caramel Macchiato Frappe",
+    "price": 80,
+    "image": "images/caramel-macchiato-frappe.jpg"
+  },
+  {
+    "section": "Frappe",
+    "name": "Chocolate Frappe",
+    "price": 75,
+    "image": "images/chocolate-frappe.jpg"
+  },
+  {
+    "section": "Frappe",
+    "name": "Hazelnut Frappe",
+    "price": 80,
+    "image": "images/hazelnut-frappe.jpg"
+  },
+  {
+    "section": "Frappe",
+    "name": "Lotus Frappe",
+    "price": 80,
+    "image": "images/lotus-frappe.jpg"
+  },
+  {
+    "section": "Frappe",
+    "name": "Mocha Frappe",
+    "price": 80,
+    "image": "images/mocha-frappe.jpg"
+  },
+  {
+    "section": "Frappe",
+    "name": "Oreo Frappe",
+    "price": 80,
+    "image": "images/oreo-frappe.jpg"
+  },
+  {
+    "section": "Frappe",
+    "name": "Pistachio Frappe",
+    "price": 85,
+    "image": "images/pistachio-frappe.jpg"
+  },
+  {
+    "section": "Frappe",
+    "name": "Spanish Latte Frappe",
+    "price": 80,
+    "image": "images/spanish-latte-frappe.jpg"
+  },
+  {
+    "section": "Frappe",
+    "name": "Vanilla Frappe",
+    "price": 70,
+    "image": "images/vanilla-frappe.jpg"
+  },
+  {
+    "section": "Frappe",
+    "name": "White Chocolate Frappe",
+    "price": 80,
+    "image": "images/white-chocolate-frappe.jpg"
+  },
+  {
+    "section": "Milkshake",
+    "name": "Mango Milkshake",
+    "price": 70,
+    "image": "images/mango-milkshake.jpg"
+  },
+  {
+    "section": "Milkshake",
+    "name": "Strawberry Milkshake",
+    "price": 70,
+    "image": "images/strawberry.webp"
+  },
+  {
+    "section": "Milkshake",
+    "name": "Vanilla Milkshake",
+    "price": 70,
+    "image": "images/vanilla.png"
+  },
+
+  {
+    "section": "Milkshake",
+    "name": "Chocolate Milkshake",
+    "price": 70,
+    "image": "images/chocolate.png"
+  },
+  {
+    "section": "Milkshake",
+    "name": "Caramel Milkshake",
+    "price": 70,
+    "image": "images/caramel.jpg"
+  },
+  {
+    "section": "Milkshake",
+    "name": "Lotus Milkshake",
+    "price": 70,
+    "image": "images/lotus.jpeg"
+  },
+  {
+    "section": "Milkshake",
+    "name": "Nutella Milkshake",
+    "price": 70,
+    "image": "images/nutella.webp"
+  },
+  {
+    "section": "Milkshake",
+    "name": "Oreo Milkshake",
+    "price": 70,
+    "image": "images/oreo.webp"
+  },
+  {
+    "section": "Milkshake",
+    "name": "KitKat Milkshake",
+    "price": 70,
+    "image": "images/kitkat.png"
+  },
+  {
+    "section": "Milkshake",
+    "name": "Snickers Milkshake",
+    "price": 70,
+    "image": "images/snickers.webp"
+  },
+  {
+    "section": "Juices & Smoothies",
+    "name": "Avocado",
+    "price": 60,
+    "image": "images/avocado.jpg"
+  },
+  {
+    "section": "Juices & Smoothies",
+    "name": "Banana Berry",
+    "price": 60,
+    "image": "images/banana-berry.jpg"
+  },
+  {
+    "section": "Juices & Smoothies",
+    "name": "Blueberry",
+    "price": 60,
+    "image": "images/blueberry.jpg"
+  },
+  {
+    "section": "Juices & Smoothies",
+    "name": "Guava Blueberry",
+    "price": 60,
+    "image": "images/guava-blueberry.jpg"
+  },
+  {
+    "section": "Juices & Smoothies",
+    "name": "Guava",
+    "price": 50,
+    "image": "images/guava.jpg"
+  },
+  {
+    "section": "Juices & Smoothies",
+    "name": "Kiwi",
+    "price": 60,
+    "image": "images/kiwi.jpg"
+  },
+  {
+    "section": "Juices & Smoothies",
+    "name": "Mango",
+    "price": 50,
+    "image": "images/mango.jpg"
+  },
+  {
+    "section": "Juices & Smoothies",
+    "name": "Mint Smoothie",
+    "price": 60,
+    "image": "images/mint-smoothie.jpg"
+  },
+  {
+    "section": "Juices & Smoothies",
+    "name": "Strawberry",
+    "price": 50,
+    "image": "images/strawberry.jpg"
+  },
+  {
+    "section": "Juices & Smoothies",
+    "name": "Watermelon",
+    "price": 50,
+    "image": "images/watermelon.jpg"
+  },
+  {
+    "section": "Desserts",
+    "name": "Cheesecake",
+    "price": 60,
+    "image": "images/cheesecake.webp"
+  },
+  {
+    "section": "Desserts",
+    "name": "Chocolate Flutes",
+    "price": 50,
+    "image": "images/chocolate-flutes.jfif"
+  },
+  {
+    "section": "Desserts",
+    "name": "Molten Cake",
+    "price": 60,
+    "image": "images/molten-cake.webp"
+  },
+  {
+    "section": "Desserts",
+    "name": "Red Velvet",
+    "price": 50,
+    "image": "images/red-velvet.jfif"
+  }
+];
+let cart = JSON.parse(localStorage.getItem("radioCafeCart") || "[]");
+
+function money(v){ return typeof v === "number" ? v + " EGP" : v + " EGP"; }
+function save(){localStorage.setItem("radioCafeCart",JSON.stringify(cart));renderCount();}
+function renderCount(){document.getElementById("count").textContent=cart.reduce((s,i)=>s+i.qty,0)}
+function add(i,b){const p=products[i];const x=cart.find(a=>a.i===i);if(x)x.qty++;else cart.push({i,qty:1});save();if(b){b.textContent="ADDED ✓";b.classList.add("added");setTimeout(()=>{b.textContent="+ ADD TO ORDER";b.classList.remove("added")},700)}}
+function slugify(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
+
+function addSized(baseIndex,size){
+ const p=products[baseIndex];
+ const price = size === "S" ? p.priceS : p.priceD;
+ const variantName = `${p.name} (${size})`;
+ let idx = products.findIndex(x=>x._variantOf===baseIndex && x._size===size);
+ if(idx===-1){
+   products.push({...p,name:variantName,price, _variantOf:baseIndex, _size:size});
+   idx=products.length-1;
+ }
+ const x=cart.find(a=>a.i===idx);
+ if(x)x.qty++; else cart.push({i:idx,qty:1});
+ save();
+}
+
+function renderMenu(){
+ const groups={};
+ products.forEach((p,i)=>(groups[p.section]??=[]).push({...p,i}));
+ const entries=Object.entries(groups);
+ document.getElementById("categoryNav").innerHTML=entries.map(([section])=>`<a href="#section-${slugify(section)}">${section}</a>`).join("");
+ document.getElementById("menu").innerHTML=entries.map(([section,items])=>`<section class="section" id="section-${slugify(section)}"><h2 class="section-title"><a href="#section-${slugify(section)}">${section}</a></h2><div class="grid">${items.map(p=>`<article class="card"><div class="photo"><img src="${p.image}" alt="${p.name}" loading="lazy"></div><div class="info"><div class="name">${p.name}</div><div class="price">${money(p.price)}</div>
+${(p.priceS!=null||p.priceD!=null)?`<div class="size-options">
+<button class="size-btn" onclick="addSized(${p.i},'S')">S · ${money(p.priceS)}</button>
+<button class="size-btn" onclick="addSized(${p.i},'D')">D · ${money(p.priceD)}</button>
+</div>`:`<button class="add" onclick="add(${p.i},this)">+ ADD TO ORDER</button>`}</div></article>`).join("")}</div></section>`).join("");
+}
+function openCart(){renderCart();document.getElementById("overlay").classList.add("show")}
+function closeCart(){document.getElementById("overlay").classList.remove("show")}
+function renderCart(){
+ const box=document.getElementById("orderItems");
+ if(!cart.length){box.innerHTML='<div class="empty">Your order is empty.<br>Add something delicious from the menu.</div>';document.getElementById("total").textContent="0 EGP";return}
+ let total=0;
+ box.innerHTML=cart.map((x,k)=>{const p=products[x.i];let unit=typeof p.price==="number"?p.price:parseInt(p.price);total+=unit*x.qty;return `<div class="order-row"><div>${p.name}<br><small>${p.price} EGP</small></div><div class="qty"><button onclick="changeQty(${k},-1)">−</button>${x.qty}<button onclick="changeQty(${k},1)">+</button></div><strong>${unit*x.qty} EGP</strong><button class="remove" onclick="removeItem(${k})">✕</button></div>`}).join("");
+ document.getElementById("total").textContent=total+" EGP";
+}
+function changeQty(k,d){cart[k].qty+=d;if(cart[k].qty<=0)cart.splice(k,1);save();renderCart()}
+function removeItem(k){cart.splice(k,1);save();renderCart()}
+const ORDER_STATS_KEY="radioCafeDailyOrderStats";
+function todayKey(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function getOrderStats(){let s;try{s=JSON.parse(localStorage.getItem(ORDER_STATS_KEY)||"null")}catch(e){s=null}const d=todayKey();if(!s||s.date!==d)s={date:d,total:0,tables:{}};return s}
+function recordOrder(table){const s=getOrderStats();const t=String(table||"Unknown").trim()||"Unknown";s.total++;s.tables[t]=(s.tables[t]||0)+1;localStorage.setItem(ORDER_STATS_KEY,JSON.stringify(s));}
+function showOrderStats(){const s=getOrderStats();let out="TODAY'S ORDERS\\nTotal: "+s.total+"\\n\\n";Object.keys(s.tables).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true})).forEach(t=>{out+="Table "+t+": "+s.tables[t]+"\\n"});alert(out)}
+function sendOrder(){
+ if(!cart.length){alert("Please add at least one item.");return}
+ const name=document.getElementById("customerName").value.trim();
+ const table=document.getElementById("tableNumber").value.trim();
+ if(!name||!table){alert("Please enter your name and table number.");return}
+ let total=0;
+ let lines=cart.map(x=>{const p=products[x.i];const unit=typeof p.price==="number"?p.price:parseInt(p.price);total+=unit*x.qty;return `• ${p.name} × ${x.qty} — ${unit*x.qty} EGP`}).join("\n");
+ const text=`*RADIO CAFE — NEW ORDER*\n\nName: ${name}\nTable: ${table}\n\n*Order:*\n${lines}\n\n*Total: ${total} EGP*`;
+ recordOrder(table);
+ const url=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+ window.open(url,"_blank");
+ // End this ordering session. A new order requires scanning the table QR again.
+ cart=[];
+ localStorage.removeItem("radioCafeCart");
+ sessionStorage.setItem("radioCafeOrderSent","1");
+ document.getElementById("overlay").classList.remove("show");
+ document.getElementById("orderSentScreen").classList.add("show");
+ document.getElementById("orderSentScreen").setAttribute("aria-hidden","false");
+ renderCount();
+}
+if(new URLSearchParams(location.search).has("stats")){setTimeout(showOrderStats,100);}
+renderMenu();renderCount();
+if(sessionStorage.getItem("radioCafeOrderSent")==="1"){
+ document.getElementById("orderSentScreen").classList.add("show");
+ document.getElementById("orderSentScreen").setAttribute("aria-hidden","false");
+}
+</script>
+</body>
+</html>
