@@ -96,25 +96,46 @@ main{width:min(1180px,94%);margin:auto;padding-bottom:120px}
     <p class="note">No phone number is required. Your order will open in WhatsApp with the selected items.</p>
   </div>
 </div>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
+<script>
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDcVC2rbFKDNAzdbAB5uluAJarbe-TKzI8",
+  authDomain: "radio--menu.firebaseapp.com",
+  projectId: "radio--menu",
+  storageBucket: "radio--menu.firebasestorage.app",
+  messagingSenderId: "1073750151513",
+  appId: "1:1073750151513:web:b370c22efa9f8a1e573c48",
+  measurementId: "G-DVYBDXPT6X"
+};
+const FIREBASE_CONFIG_READY = true;
+let db = null;
+try {
+  firebase.initializeApp(FIREBASE_CONFIG);
+  db = firebase.firestore();
+} catch (e) {
+  console.error("Firebase initialization failed:", e);
+}
+</script>
 <script>
 const WHATSAPP_NUMBER = "201003914947"; // Replace with RADIO CAFE WhatsApp number, digits only.
 const products = [
   {
     "section": "Hot Drinks",
     "name": "Tea",
-    "price": 15,
+    "price": 20,
     "image": "images/tea.jpg"
   },
   {
     "section": "Hot Drinks",
     "name": "English Tea",
-    "price": 20,
+    "price": 40,
     "image": "images/english-tea.jpg"
   },
   {
     "section": "Hot Drinks",
     "name": "Turkish Coffee",
-    "price": 25,
+    "price": 30,
     "image": "images/espresso.jpg"
   },
   {
@@ -126,7 +147,7 @@ const products = [
   {
     "section": "Hot Drinks",
     "name": "Hot Chocolate",
-    "price": 40,
+    "price": 45,
     "image": "images/hot-chocolate.jpg"
   },
   {
@@ -134,7 +155,7 @@ const products = [
     "name": "Espresso",
     "price": 40,
     "priceS": 40,
-    "priceD": 45,
+    "priceD": 50,
     "image": "images/espresso.jpg"
   },
   {
@@ -152,7 +173,7 @@ const products = [
   {
     "section": "Hot Drinks",
     "name": "Hazelnut Coffee",
-    "price": 40,
+    "price": 50,
     "image": "images/hazelnut-coffee.jpg"
   },
   {
@@ -164,7 +185,7 @@ const products = [
   {
     "section": "Hot Drinks",
     "name": "Cortado",
-    "price": 45,
+    "price": 60,
     "image": "images/cortado.jpg"
   },
   {
@@ -172,14 +193,25 @@ const products = [
     "name": "Macchiato",
     "price": 45,
     "priceS": 45,
-    "priceD": 50,
+    "priceD": 55,
     "image": "images/espresso.jpg"
   },
   {
     "section": "Hot Drinks",
-    "name": "Latte Hot Spanish",
-    "price": 50,
+    "name": "Hot Spanish Latte",
+    "price": 60,
     "image": "images/latte-hot-spanish.jpg"
+  },
+  {
+    "section": "Hot Drinks",
+    "name": "French Coffee",
+    "price": 45,
+    "image": "images/french-coffee.jpg"
+  },
+  {
+    "section": "Hot Drinks",
+    "name": "V60",
+    "price": 130
   },
   {
     "section": "Hot Drinks",
@@ -214,7 +246,7 @@ const products = [
   {
     "section": "Iced Drinks",
     "name": "Iced Mocha Dark / White",
-    "price": 65,
+    "price": 85,
     "image": "images/iced-mocha-dark-white.png"
   },
   {
@@ -226,13 +258,13 @@ const products = [
   {
     "section": "Iced Drinks",
     "name": "Mojito Classic",
-    "price": 60,
+    "price": 45,
     "image": "images/mojito-classic.png"
   },
   {
     "section": "Iced Drinks",
     "name": "Mojito + Flavor",
-    "price": 50,
+    "price": 65,
     "image": "images/mojito-flavor.png"
   },
   {
@@ -242,75 +274,105 @@ const products = [
     "image": "images/mojito-red-bull.jpg"
   },
   {
+    "section": "Iced Drinks",
+    "name": "Segrt coffe",
+    "price": 80
+  },
+  {
+    "section": "Iced Drinks",
+    "name": "Dirty espresso",
+    "price": 120
+  },
+  {
+    "section": "Iced Drinks",
+    "name": "Iced matcha",
+    "price": 70
+  },
+  {
+    "section": "Iced Drinks",
+    "name": "Iced salted caramel",
+    "price": 80
+  },
+  {
+    "section": "Iced Drinks",
+    "name": "Iced strawberry coconut matcha",
+    "price": 90
+  },
+  {
+    "section": "Iced Drinks",
+    "name": "V60",
+    "price": 130
+  },
+  {
     "section": "Frappe",
     "name": "Classic Frappe",
-    "price": 70,
+    "price": 80,
     "image": "images/classic-frappe.jpg"
   },
   {
     "section": "Frappe",
     "name": "Caramel Frappe",
-    "price": 75,
+    "price": 90,
     "image": "images/caramel-frappe.jpg"
   },
   {
     "section": "Frappe",
     "name": "Caramel Macchiato Frappe",
-    "price": 80,
+    "price": 100,
     "image": "images/caramel-macchiato-frappe.jpg"
   },
   {
     "section": "Frappe",
     "name": "Chocolate Frappe",
-    "price": 75,
+    "price": 90,
     "image": "images/chocolate-frappe.jpg"
   },
   {
     "section": "Frappe",
     "name": "Hazelnut Frappe",
-    "price": 80,
+    "price": 90,
     "image": "images/hazelnut-frappe.jpg"
   },
   {
     "section": "Frappe",
     "name": "Lotus Frappe",
-    "price": 80,
+    "price": 95,
     "image": "images/lotus-frappe.jpg"
   },
   {
     "section": "Frappe",
     "name": "Mocha Frappe",
-    "price": 80,
+    "price": 90,
     "image": "images/mocha-frappe.jpg"
   },
   {
     "section": "Frappe",
     "name": "Oreo Frappe",
-    "price": 80,
+    "price": 95,
     "image": "images/oreo-frappe.jpg"
   },
   {
     "section": "Frappe",
     "name": "Pistachio Frappe",
-    "price": 85,
+    "price": 100,
     "image": "images/pistachio-frappe.jpg"
   },
   {
     "section": "Frappe",
     "name": "Spanish Latte Frappe",
-    "price": 80,
+    "price": 95,
     "image": "images/spanish-latte-frappe.jpg"
   },
   {
     "section": "Frappe",
     "name": "Vanilla Frappe",
-    "price": 70,
+    "price": 85,
     "image": "images/vanilla-frappe.jpg"
   },
   {
     "section": "Frappe",
     "name": "White Chocolate Frappe",
-    "price": 80,
+    "price": 90,
     "image": "images/white-chocolate-frappe.jpg"
   },
   {
@@ -376,89 +438,90 @@ const products = [
   },
   {
     "section": "Juices & Smoothies",
-    "name": "Avocado",
-    "price": 60,
-    "image": "images/avocado.jpg"
-  },
-  {
-    "section": "Juices & Smoothies",
-    "name": "Banana Berry",
-    "price": 60,
-    "image": "images/banana-berry.jpg"
-  },
-  {
-    "section": "Juices & Smoothies",
-    "name": "Blueberry",
-    "price": 60,
-    "image": "images/blueberry.jpg"
-  },
-  {
-    "section": "Juices & Smoothies",
-    "name": "Guava Blueberry",
-    "price": 60,
-    "image": "images/guava-blueberry.jpg"
-  },
-  {
-    "section": "Juices & Smoothies",
-    "name": "Guava",
-    "price": 50,
-    "image": "images/guava.jpg"
-  },
-  {
-    "section": "Juices & Smoothies",
-    "name": "Kiwi",
-    "price": 60,
-    "image": "images/kiwi.jpg"
-  },
-  {
-    "section": "Juices & Smoothies",
     "name": "Mango",
     "price": 50,
     "image": "images/mango.jpg"
   },
   {
     "section": "Juices & Smoothies",
-    "name": "Mint Smoothie",
-    "price": 60,
-    "image": "images/mint-smoothie.jpg"
-  },
-  {
-    "section": "Juices & Smoothies",
     "name": "Strawberry",
-    "price": 50,
+    "price": 45,
     "image": "images/strawberry.jpg"
   },
   {
     "section": "Juices & Smoothies",
-    "name": "Watermelon",
+    "name": "Date with Milk",
+    "price": 60,
+    "image": "images/date-with-milk.jpg"
+  },
+  {
+    "section": "Juices & Smoothies",
+    "name": "Guava",
+    "price": 40,
+    "image": "images/guava.jpg"
+  },
+  {
+    "section": "Juices & Smoothies",
+    "name": "Guava with Milk",
     "price": 50,
+    "image": "images/guava-with-milk.jpg"
+  },
+  {
+    "section": "Juices & Smoothies",
+    "name": "Watermelon",
+    "price": 45,
     "image": "images/watermelon.jpg"
+  },
+  {
+    "section": "Juices & Smoothies",
+    "name": "Avocado",
+    "price": 60,
+    "image": "images/avocado.jpg"
+  },
+  {
+    "section": "Juices & Smoothies",
+    "name": "Kiwi",
+    "price": 45,
+    "image": "images/kiwi.jpg"
+  },
+  {
+    "section": "Juices & Smoothies",
+    "name": "Banana with Milk",
+    "price": 45,
+    "image": "images/banana-with-milk.jpg"
+  },
+  {
+    "section": "Juices & Smoothies",
+    "name": "Mint Smoothie",
+    "price": 40,
+    "image": "images/mint-smoothie.jpg"
   },
   {
     "section": "Desserts",
     "name": "Cheesecake",
-    "price": 60,
+    "price": 80,
     "image": "images/cheesecake.webp"
   },
   {
     "section": "Desserts",
     "name": "Chocolate Flutes",
-    "price": 50,
+    "price": 75,
     "image": "images/chocolate-flutes.jfif"
   },
   {
     "section": "Desserts",
     "name": "Molten Cake",
-    "price": 60,
+    "price": 85,
     "image": "images/molten-cake.webp"
   },
   {
     "section": "Desserts",
     "name": "Red Velvet",
-    "price": 50,
+    "price": 80,
     "image": "images/red-velvet.jfif"
   }
 ];
+const MOJITO_FLAVORS = ["Mint","Green Apple","Blueberry","Passion Fruit","Strawberry","Peach","Pineapple","Watermelon","Kiwi","Orange"];
 let cart = JSON.parse(localStorage.getItem("radioCafeCart") || "[]");
 
 function money(v){ return typeof v === "number" ? v + " EGP" : v + " EGP"; }
@@ -466,6 +529,20 @@ function save(){localStorage.setItem("radioCafeCart",JSON.stringify(cart));rende
 function renderCount(){document.getElementById("count").textContent=cart.reduce((s,i)=>s+i.qty,0)}
 function add(i,b){const p=products[i];const x=cart.find(a=>a.i===i);if(x)x.qty++;else cart.push({i,qty:1});save();if(b){b.textContent="ADDED ✓";b.classList.add("added");setTimeout(()=>{b.textContent="+ ADD TO ORDER";b.classList.remove("added")},700)}}
 function slugify(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
+
+function addFlavor(baseIndex){
+ const select=document.getElementById(`flavor-${baseIndex}`);
+ const flavor=select?.value;
+ if(!flavor){alert("Please choose a flavor first.");return}
+ const p=products[baseIndex];
+ const variantName=`${p.name} — ${flavor}`;
+ let idx=products.findIndex(x=>x._flavorOf===baseIndex && x._flavor===flavor);
+ if(idx===-1){products.push({...p,name:variantName,price:65,_flavorOf:baseIndex,_flavor:flavor});idx=products.length-1}
+ const x=cart.find(a=>a.i===idx);
+ if(x)x.qty++; else cart.push({i:idx,qty:1});
+ save();
+ select.value="";
+}
 
 function addSized(baseIndex,size){
  const p=products[baseIndex];
@@ -486,11 +563,8 @@ function renderMenu(){
  products.forEach((p,i)=>(groups[p.section]??=[]).push({...p,i}));
  const entries=Object.entries(groups);
  document.getElementById("categoryNav").innerHTML=entries.map(([section])=>`<a href="#section-${slugify(section)}">${section}</a>`).join("");
- document.getElementById("menu").innerHTML=entries.map(([section,items])=>`<section class="section" id="section-${slugify(section)}"><h2 class="section-title"><a href="#section-${slugify(section)}">${section}</a></h2><div class="grid">${items.map(p=>`<article class="card"><div class="photo"><img src="${p.image}" alt="${p.name}" loading="lazy"></div><div class="info"><div class="name">${p.name}</div><div class="price">${money(p.price)}</div>
-${(p.priceS!=null||p.priceD!=null)?`<div class="size-options">
-<button class="size-btn" onclick="addSized(${p.i},'S')">S · ${money(p.priceS)}</button>
-<button class="size-btn" onclick="addSized(${p.i},'D')">D · ${money(p.priceD)}</button>
-</div>`:`<button class="add" onclick="add(${p.i},this)">+ ADD TO ORDER</button>`}</div></article>`).join("")}</div></section>`).join("");
+ document.getElementById("menu").innerHTML=entries.map(([section,items])=>`<section class="section" id="section-${slugify(section)}"><h2 class="section-title"><a href="#section-${slugify(section)}">${section}</a></h2><div class="grid">${items.map(p=>`<article class="card">${p.image?`<div class="photo"><img src="${p.image}" alt="${p.name}" loading="lazy"></div>`:`<div class="photo" style="display:none"></div>`}<div class="info"><div class="name">${p.name}</div><div class="price">${money(p.price)}</div>
+${p.name==='Mojito + Flavor'&&!p._flavorOf?`<div style="grid-column:1/-1"><select id="flavor-${p.i}" style="width:100%;padding:9px;border:1px solid var(--line);border-radius:9px;background:#fffdf9;color:var(--brown);font:600 11px Montserrat"><option value="">Choose flavor</option>${MOJITO_FLAVORS.map(f=>`<option value="${f}">${f}</option>`).join("")}</select><button class="add" style="margin-top:7px" onclick="addFlavor(${p.i})">+ ADD MOJITO</button></div>`:(p.priceS!=null||p.priceD!=null)?`<div class="size-options"><button class="size-btn" onclick="addSized(${p.i},'S')">S · ${money(p.priceS)}</button><button class="size-btn" onclick="addSized(${p.i},'D')">D · ${money(p.priceD)}</button></div>`:`<button class="add" onclick="add(${p.i},this)">+ ADD TO ORDER</button>`}</div></article>`).join("")}</div></section>`).join("");
 }
 function openCart(){renderCart();document.getElementById("overlay").classList.add("show")}
 function closeCart(){document.getElementById("overlay").classList.remove("show")}
@@ -503,32 +577,35 @@ function renderCart(){
 }
 function changeQty(k,d){cart[k].qty+=d;if(cart[k].qty<=0)cart.splice(k,1);save();renderCart()}
 function removeItem(k){cart.splice(k,1);save();renderCart()}
-const ORDER_STATS_KEY="radioCafeDailyOrderStats";
 function todayKey(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
-function getOrderStats(){let s;try{s=JSON.parse(localStorage.getItem(ORDER_STATS_KEY)||"null")}catch(e){s=null}const d=todayKey();if(!s||s.date!==d)s={date:d,total:0,tables:{}};return s}
-function recordOrder(table){const s=getOrderStats();const t=String(table||"Unknown").trim()||"Unknown";s.total++;s.tables[t]=(s.tables[t]||0)+1;localStorage.setItem(ORDER_STATS_KEY,JSON.stringify(s));}
-function showOrderStats(){const s=getOrderStats();let out="TODAY'S ORDERS\\nTotal: "+s.total+"\\n\\n";Object.keys(s.tables).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true})).forEach(t=>{out+="Table "+t+": "+s.tables[t]+"\\n"});alert(out)}
-function sendOrder(){
+function formatOrderDateTime(){const d=new Date();return {date:d.toLocaleDateString('en-GB'),time:d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}}
+async function getNextOrderNumber(){
+ if(!db)throw new Error('Firebase is not initialized.');
+ const dateKey=todayKey(),ref=db.collection('radioCafeOrderCounters').doc(dateKey);let nextNumber=0;
+ await db.runTransaction(async transaction=>{const snap=await transaction.get(ref);if(!snap.exists){nextNumber=1;transaction.set(ref,{date:dateKey,count:1});}else{const current=Number(snap.data().count||0);nextNumber=current+1;transaction.update(ref,{date:dateKey,count:nextNumber});}});
+ return nextNumber;
+}
+async function saveOrderRecord(order){if(!db)return;await db.collection('radioCafeOrders').add(order)}
+async function sendOrder(){
  if(!cart.length){alert("Please add at least one item.");return}
  const name=document.getElementById("customerName").value.trim();
  const table=document.getElementById("tableNumber").value.trim();
  if(!name||!table){alert("Please enter your name and table number.");return}
- let total=0;
- let lines=cart.map(x=>{const p=products[x.i];const unit=typeof p.price==="number"?p.price:parseInt(p.price);total+=unit*x.qty;return `• ${p.name} × ${x.qty} — ${unit*x.qty} EGP`}).join("\n");
- const text=`*RADIO CAFE — NEW ORDER*\n\nName: ${name}\nTable: ${table}\n\n*Order:*\n${lines}\n\n*Total: ${total} EGP*`;
- recordOrder(table);
+ if(!db){alert("Order system is not connected to Firebase yet.");return}
+ const items=cart.map(x=>{const p=products[x.i];const unit=typeof p.price==="number"?p.price:parseInt(p.price);return {name:p.name,quantity:x.qty,unitPrice:unit,lineTotal:unit*x.qty}});
+ const total=items.reduce((sum,item)=>sum+item.lineTotal,0);
+ const dt=formatOrderDateTime();
+ let orderNumber;
+ try{orderNumber=await getNextOrderNumber()}catch(e){console.error(e);alert("Could not get the order number. Please check your internet connection and try again.");return}
+ const orderNo=String(orderNumber).padStart(3,"0");
+ const lines=items.map(item=>`• ${item.name} × ${item.quantity} — ${item.lineTotal} EGP`).join("\n");
+ const text=`*RADIO CAFE — NEW ORDER*\n\n*Order #${orderNo}*\nDate: ${dt.date}\nTime: ${dt.time}\n\nName: ${name}\nTable: ${table}\n\n*Order:*\n${lines}\n\n*Total: ${total} EGP*`;
  const url=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
  window.open(url,"_blank");
- // End this ordering session. A new order requires scanning the table QR again.
- cart=[];
- localStorage.removeItem("radioCafeCart");
- sessionStorage.setItem("radioCafeOrderSent","1");
- document.getElementById("overlay").classList.remove("show");
- document.getElementById("orderSentScreen").classList.add("show");
- document.getElementById("orderSentScreen").setAttribute("aria-hidden","false");
- renderCount();
+ try{await saveOrderRecord({orderNumber,orderNumberFormatted:orderNo,dateKey:todayKey(),date:dt.date,time:dt.time,customerName:name,tableNumber:table,items,total,createdAt:firebase.firestore.FieldValue.serverTimestamp()})}catch(e){console.error("Order record save failed:",e)}
+ cart=[];localStorage.removeItem("radioCafeCart");sessionStorage.setItem("radioCafeOrderSent","1");
+ document.getElementById("overlay").classList.remove("show");document.getElementById("orderSentScreen").classList.add("show");document.getElementById("orderSentScreen").setAttribute("aria-hidden","false");renderCount();
 }
-if(new URLSearchParams(location.search).has("stats")){setTimeout(showOrderStats,100);}
 renderMenu();renderCount();
 if(sessionStorage.getItem("radioCafeOrderSent")==="1"){
  document.getElementById("orderSentScreen").classList.add("show");
