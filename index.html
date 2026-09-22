@@ -60,6 +60,38 @@ main{width:min(1180px,94%);margin:auto;padding-bottom:120px}
 .size-btn{border:1px solid var(--brown);background:#fff8ee;color:var(--brown);border-radius:9px;padding:7px 12px;cursor:pointer;font:700 11px Montserrat;transition:.15s}
 .size-btn:hover,.size-btn.active{background:var(--brown);color:#fff8ee}
 </style>
+
+<style>
+.creator-credit{
+  margin: 18px 18px 110px;
+  padding: 22px 16px;
+  text-align: center;
+  border-top: 1px solid var(--line);
+  color: var(--brown2);
+}
+.creator-credit .credit-title{
+  font: 700 10px Montserrat, sans-serif;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+.creator-credit .credit-name{
+  font: 800 18px Montserrat, sans-serif;
+  color: var(--brown);
+  margin-bottom: 9px;
+}
+.creator-credit a{
+  color: var(--brown);
+  text-decoration: none;
+  font-weight: 700;
+}
+.creator-credit .credit-line{
+  font-size: 11px;
+  line-height: 1.8;
+}
+.creator-credit a:hover{text-decoration:underline;}
+</style>
+
 </head>
 <body>
 <header>
@@ -83,6 +115,19 @@ main{width:min(1180px,94%);margin:auto;padding-bottom:120px}
 .order-sent-box p{line-height:1.7;color:var(--brown2);margin:0;}
 .order-sent-box .scan-note{margin-top:22px;padding:14px;border-radius:12px;background:#eee1d1;color:var(--brown);font-weight:700;}
 </style>
+
+<footer class="creator-credit">
+  <div class="credit-title">Made &amp; Designed by</div>
+  <div class="credit-name">Saif Sherief</div>
+  <div class="credit-line">
+    Instagram:
+    <a href="https://www.instagram.com/saifsherief_?stkn=MXZvdjYxdWkxNnNjcw==" target="_blank" rel="noopener">@saifsherief_</a>
+  </div>
+  <div class="credit-line">
+    Phone: <a href="tel:01068102112">01068102112</a>
+  </div>
+</footer>
+
 <div id="orderSentScreen" aria-hidden="true"><div class="order-sent-box"><div class="order-sent-check">✓</div><h2>Order Sent</h2><p>Your order is ready in WhatsApp.</p><div class="scan-note">To place another order, scan the table QR code again.</div></div></div>
 
 <div class="overlay" id="overlay" onclick="if(event.target===this)closeCart()">
