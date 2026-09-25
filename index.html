@@ -642,10 +642,12 @@ async function sendOrder(){
  const lines=items.map(item=>`• ${item.name} × ${item.quantity} — ${item.lineTotal} EGP`).join("\n");
  const text=`*RADIO CAFE — NEW ORDER*\n\n*Order #${orderNo}*\nDate: ${dt.date}\nTime: ${dt.time}\n\nName: ${name}\nTable: ${table}\n\n*Order:*\n${lines}\n\n*Total: ${total} EGP*`;
  const url=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
- window.open(url,"_blank");
+ // Do not use window.open() here: this function waits for Firebase first, so Safari/iOS may treat the popup as not user-initiated and block it.
+ // Navigating the current tab to the official wa.me universal link works on both iPhone and Android.
  try{await saveOrderRecord({orderNumber,orderNumberFormatted:orderNo,dateKey:todayKey(),date:dt.date,time:dt.time,customerName:name,tableNumber:table,items,total,createdAt:firebase.firestore.FieldValue.serverTimestamp()})}catch(e){console.error("Order record save failed:",e)}
  cart=[];localStorage.removeItem("radioCafeCart");sessionStorage.setItem("radioCafeOrderSent","1");
  document.getElementById("overlay").classList.remove("show");document.getElementById("orderSentScreen").classList.add("show");document.getElementById("orderSentScreen").setAttribute("aria-hidden","false");renderCount();
+ window.location.href=url;
 }
 renderMenu();renderCount();
 if(sessionStorage.getItem("radioCafeOrderSent")==="1"){
