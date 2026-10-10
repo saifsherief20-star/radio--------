@@ -654,18 +654,26 @@ async function loadPublicProducts(){
   try{
     const snap=await db.collection("radioCafePublicProducts").where("active","==",true).get();
     if(!snap.empty){
-      const live=snap.docs.map(doc=>{const p=doc.data();return {id:doc.id,name:String(p.name||""),section:String(p.section||"Other"),price:Number(p.price)||0,image:String(p.image||"")};}).filter(p=>p.name&&p.section);
+      const live=snap.docs.map(doc=>{const p=doc.data();return {id:doc.id,name:String(p.name||"").trim(),section:String(p.section||"Other").trim(),price:Number(p.price)||0,image:String(p.image||"")};}).filter(p=>p.name&&p.section);
       if(live.length){
-        // Keep the original built-in menu and its images. Live Firebase products
-        // are merged in; a live product with the same name updates the old entry.
         const oldCart=cart.map(x=>({name:products[x.i]?.name,qty:x.qty}));
-        const merged=products.map(p=>({...p}));
+        // Keep the original menu intact and merge Firestore products into it.
+        // Match category names without case/extra-space differences so "hot drinks"
+        // and "Hot Drinks" use the same section.
+        const canonicalSections = new Map();
+        products.forEach(p=>{const key=String(p.section||"").trim().toLowerCase();if(key&&!canonicalSections.has(key))canonicalSections.set(key,p.section);});
         for(const item of live){
-          const match=merged.findIndex(p=>String(p.name||'').trim().toLowerCase()===item.name.trim().toLowerCase());
-          if(match>=0) merged[match]={...merged[match],...item};
-          else merged.push(item);
+          const key=item.section.trim().toLowerCase();
+          item.section=canonicalSections.get(key)||item.section;
+          const existingIndex=products.findIndex(p=>String(p.name||"").trim().toLowerCase()===item.name.toLowerCase() && String(p.section||"").trim().toLowerCase()===key);
+          if(existingIndex>=0){
+            // Preserve special menu options already defined in the built-in item.
+            products[existingIndex]={...products[existingIndex],...item};
+          }else{
+            products.push(item);
+            canonicalSections.set(key,item.section);
+          }
         }
-        products.splice(0,products.length,...merged);
         cart=oldCart.map(x=>({i:products.findIndex(p=>p.name===x.name),qty:x.qty})).filter(x=>x.i>=0);
         save();renderMenu();renderCount();
       }
