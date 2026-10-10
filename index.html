@@ -656,8 +656,16 @@ async function loadPublicProducts(){
     if(!snap.empty){
       const live=snap.docs.map(doc=>{const p=doc.data();return {id:doc.id,name:String(p.name||""),section:String(p.section||"Other"),price:Number(p.price)||0,image:String(p.image||"")};}).filter(p=>p.name&&p.section);
       if(live.length){
+        // Keep the original built-in menu and its images. Live Firebase products
+        // are merged in; a live product with the same name updates the old entry.
         const oldCart=cart.map(x=>({name:products[x.i]?.name,qty:x.qty}));
-        products.splice(0,products.length,...live);
+        const merged=products.map(p=>({...p}));
+        for(const item of live){
+          const match=merged.findIndex(p=>String(p.name||'').trim().toLowerCase()===item.name.trim().toLowerCase());
+          if(match>=0) merged[match]={...merged[match],...item};
+          else merged.push(item);
+        }
+        products.splice(0,products.length,...merged);
         cart=oldCart.map(x=>({i:products.findIndex(p=>p.name===x.name),qty:x.qty})).filter(x=>x.i>=0);
         save();renderMenu();renderCount();
       }
