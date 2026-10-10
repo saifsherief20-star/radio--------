@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RADIO CAFE — Digital Menu</title>
+<title>RADIO CAFE — Menu</title>
 <meta name="theme-color" content="#5a3b2e">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600;700&display=swap');
@@ -164,7 +164,7 @@ try {
 </script>
 <script>
 const WHATSAPP_NUMBER = "201115241247"; // Replace with RADIO CAFE WhatsApp number, digits only.
-const defaultProducts = [
+let products = [
   {
     "section": "Hot Drinks",
     "name": "Tea",
@@ -562,7 +562,6 @@ const defaultProducts = [
     "image": "images/red-velvet.jfif"
   }
 ];
-let products = defaultProducts.map((p, i) => ({ ...p, id: p.id || `static-${i}` }));
 const MOJITO_FLAVORS = ["Mint","Green Apple","Blueberry","Passion Fruit","Strawberry","Peach","Pineapple","Watermelon","Kiwi","Orange"];
 let cart = JSON.parse(localStorage.getItem("radioCafeCart") || "[]");
 
@@ -634,7 +633,7 @@ async function sendOrder(){
  const table=document.getElementById("tableNumber").value.trim();
  if(!name||!table){alert("Please enter your name and table number.");return}
  if(!db){alert("Order system is not connected to Firebase yet.");return}
- const items=cart.map(x=>{const p=products[x.i];const unit=typeof p.price==="number"?p.price:parseInt(p.price);const unitCost=Number(p.cost||0);return {productId:p.id||null,name:p.name,quantity:x.qty,unitPrice:unit,unitCost,lineCost:unitCost*x.qty,lineTotal:unit*x.qty}});
+ const items=cart.map(x=>{const p=products[x.i];const unit=typeof p.price==="number"?p.price:parseInt(p.price);return {name:p.name,quantity:x.qty,unitPrice:unit,lineTotal:unit*x.qty}});
  const total=items.reduce((sum,item)=>sum+item.lineTotal,0);
  const dt=formatOrderDateTime();
  let orderNumber;
@@ -650,17 +649,23 @@ async function sendOrder(){
  document.getElementById("overlay").classList.remove("show");document.getElementById("orderSentScreen").classList.add("show");document.getElementById("orderSentScreen").setAttribute("aria-hidden","false");renderCount();
  window.location.href=url;
 }
-async function loadProductsFromFirebase(){
- if(!db) return;
- try{
-  const snap=await db.collection("radioCafeProducts").where("active","==",true).get();
-  if(!snap.empty){
-   products=snap.docs.map(doc=>{const d=doc.data();return {...d,id:doc.id,price:Number(d.price||0),cost:Number(d.cost||0)};});
-   renderMenu();
-  }
- }catch(e){console.warn("Using the built-in menu until Firebase products are configured:",e);}
+async function loadPublicProducts(){
+  if(!db)return;
+  try{
+    const snap=await db.collection("radioCafePublicProducts").where("active","==",true).get();
+    if(!snap.empty){
+      const live=snap.docs.map(doc=>{const p=doc.data();return {id:doc.id,name:String(p.name||""),section:String(p.section||"Other"),price:Number(p.price)||0,image:String(p.image||"")};}).filter(p=>p.name&&p.section);
+      if(live.length){
+        const oldCart=cart.map(x=>({name:products[x.i]?.name,qty:x.qty}));
+        products.splice(0,products.length,...live);
+        cart=oldCart.map(x=>({i:products.findIndex(p=>p.name===x.name),qty:x.qty})).filter(x=>x.i>=0);
+        save();renderMenu();renderCount();
+      }
+    }
+  }catch(e){console.error("Could not load live menu products; showing built-in menu.",e);}
 }
-renderMenu();renderCount();loadProductsFromFirebase();
+renderMenu();renderCount();
+loadPublicProducts();
 if(sessionStorage.getItem("radioCafeOrderSent")==="1"){
  document.getElementById("orderSentScreen").classList.add("show");
  document.getElementById("orderSentScreen").setAttribute("aria-hidden","false");
